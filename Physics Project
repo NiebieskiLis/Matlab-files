@@ -1,0 +1,42 @@
+Temp=[7.2 ,10.4 ,15.1 ];
+a=0.00002805;
+deltaR=.0025;
+deltaT=0.1;
+a_change=0.000000005;
+Z=.25
+time=[0:deltaT:400];
+times=length(time);
+R=[0:deltaR:.2];
+Rs=length(R);
+a_pocz=0;
+ap=true;
+a_koncowe=0;
+ak=true;
+while 1
+  T=ones(Rs , times);
+  %y- czas x-promien
+  T(Rs,[1:times])=20;
+  T([1:Rs],1)=0;
+  for j=1:(times-1)
+     T(1,j)=T(2,j);
+    for i= 2:(Rs-1)
+      T(i,j+1)=((T(i+1,j)-2*T(i,j)+T(i-1,j))/(deltaR^2) + (1/R(i)) * (T(i+1,j)-T(i,j))/(deltaR))*deltaT*a+T(i,j); 
+  endfor
+endfor
+
+  if ((abs(abs(T((.2/4)/deltaR,200/deltaT)) - Temp(1)) <= Z) && (abs(abs(T((.2/2)/deltaR,200/deltaT)) - Temp(2)) <= Z) && (abs(abs(T((.6/4)/deltaR,200/deltaT)) - Temp(3)) <= Z))
+      if ap 
+        a_pocz = a;
+        ap = false;
+      endif
+  elseif ap == false 
+      ak = false;
+      a_koncowe = a;
+  endif
+  
+  a=a+a_change;
+  if ((ak==false)&&(ap==false))
+    break;
+  endif  
+end
+
